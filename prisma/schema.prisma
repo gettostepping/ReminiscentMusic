@@ -1,0 +1,414 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String   @id @default(cuid())
+  uid              Int      @unique
+  email            String?  @unique
+  password         String?
+  name             String?  @unique
+  image            String?
+  discordId        String?  @unique
+  banner           String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  
+  // Relations
+  watchlists       Watchlist[]
+  profile          Profile?
+  roles            Role[]
+  ratings          Rating[]
+  comments         ProfileComment[]
+  reports          Report[]
+  commentLikes     CommentLike[]
+  presence         Presence?
+  profileViews     ProfileView[]
+  searches         Search[]
+  points           Int?
+  shopPurchases    ShopPurchase[]
+  
+  // SoundCloud/Music Relations
+  tracks           Track[]
+  likedTracks      TrackLike[]
+  commentsOnTracks TrackComment[]
+  trackCommentLikes TrackCommentLike[]
+  playlists        Playlist[]
+  followers        Follow[] @relation("UserFollowers")
+  following        Follow[] @relation("UserFollowing")
+  reposts          Repost[]
+  listeningHistory ListeningHistory[]
+  
+  @@index([uid])
+  @@index([email])
+}
+
+model Profile {
+  id             String   @id @default(cuid())
+  user           User     @relation(fields: [userId], references: [id])
+  userId         String   @unique
+  bio            String?  @db.Text
+  themeAccent    String?
+  banner         String?
+  customAvatar   String?
+  customBanner   String?
+  lastActiveAt   DateTime @default(now())
+  
+  views          ProfileView[]
+  comments       ProfileComment[]
+  
+  @@index([userId])
+}
+
+model ProfileView {
+  id        String   @id @default(cuid())
+  profile   Profile  @relation(fields: [profileId], references: [id])
+  profileId String
+  viewerId  String?
+  viewer    User?    @relation(fields: [viewerId], references: [id])
+  createdAt DateTime @default(now())
+  @@index([profileId, createdAt])
+}
+
+model ProfileComment {
+  id        String   @id @default(cuid())
+  profile   Profile  @relation(fields: [profileId], references: [id])
+  profileId String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  body      String
+  likes     Int      @default(0)
+  createdAt DateTime @default(now())
+  reports   Report[]
+  likedBy   CommentLike[]
+  
+  @@index([profileId, createdAt])
+}
+
+model CommentLike {
+  id        String   @id @default(cuid())
+  comment   ProfileComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  
+  @@unique([commentId, userId])
+}
+
+model Presence {
+  id          String   @id @default(cuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String   @unique
+  currentPage String?
+  pageType    String?
+  mediaType   String?
+  updatedAt   DateTime @updatedAt
+  now         DateTime @default(now())
+}
+
+model Role {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  name      String
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, name], name: "userId_name")
+}
+
+model Ban {
+  id        String   @id @default(cuid())
+  userId    String?
+  ip        String?
+  reason    String?
+  bannedUntil DateTime?
+  createdAt DateTime @default(now())
+  @@index([userId])
+  @@index([ip])
+}
+
+model Invites {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  issuerId    String?
+  enabled     Boolean  @default(true)
+  usedBy      Int      @default(0)
+  testingMode Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model Report {
+  id         String   @id @default(cuid())
+  comment    ProfileComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId  String
+  reporter   User     @relation(fields: [reporterId], references: [id])
+  reporterId String
+  reason     String
+  details    String?
+  status     String   @default("pending")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Rating {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  tmdbId    Int
+  type      String
+  rating    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, tmdbId, type], name: "user_tmdb_type")
+  @@index([tmdbId, type])
+}
+
+model Search {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  query     String
+  results   Int
+  createdAt DateTime @default(now())
+  
+  @@index([userId, createdAt])
+  @@index([query])
+}
+
+model ShopItem {
+  id          String   @id @default(cuid())
+  name        String
+  description String   @db.Text
+  price       Int
+  category    String
+  type        String
+  icon        String?
+  color       String?
+  enabled     Boolean  @default(true)
+  stock       Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  purchases   ShopPurchase[]
+}
+
+model ShopPurchase {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  shopItem  ShopItem @relation(fields: [shopItemId], references: [id])
+  shopItemId String
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, shopItemId], name: "userId_shopItemId")
+  @@index([userId])
+}
+
+model Watchlist {
+  id          String   @id @default(cuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  tmdbId      Int
+  type        String
+  title       String
+  poster      String?
+  lastSeason  Int?
+  lastEpisode Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, tmdbId], name: "userId_tmdbId")
+}
+
+// ========== SOUNDCLOUD/MUSIC MODELS ==========
+
+model Track {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  @db.Text
+  audioUrl    String   // Path to uploaded audio file
+  artworkUrl  String?  // Path to artwork image
+  duration    Int?     // Duration in seconds
+  genre       String?
+  tags        String[] @default([])
+  isPublic    Boolean  @default(true)
+  playCount   Int      @default(0)
+  likeCount   Int      @default(0)
+  repostCount Int      @default(0)
+  
+  // Relations
+  artist      User     @relation(fields: [artistId], references: [id])
+  artistId    String
+  likes       TrackLike[]
+  comments    TrackComment[]
+  playlists   PlaylistTrack[]
+  reposts     Repost[]
+  listeningHistory ListeningHistory[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([artistId])
+  @@index([createdAt])
+  @@index([isPublic])
+  @@index([likeCount])
+  @@index([playCount])
+}
+
+model TrackLike {
+  id        String   @id @default(cuid())
+  track     Track?   @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  trackId   String?
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  // SoundCloud track data (stored as JSON for tracks not in database)
+  soundcloudTrackId String?
+  soundcloudTitle   String?
+  soundcloudArtist  String?
+  soundcloudArtworkUrl String?
+  soundcloudAudioUrl   String?
+  soundcloudSourceUrl  String?
+  soundcloudDuration   Int?     // Duration in seconds
+  createdAt DateTime @default(now())
+  
+  @@unique([trackId, userId], name: "trackId_userId")
+  @@unique([soundcloudTrackId, userId], name: "soundcloudTrackId_userId")
+  @@index([trackId])
+  @@index([soundcloudTrackId])
+  @@index([userId])
+}
+
+model TrackComment {
+  id        String   @id @default(cuid())
+  track     Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  trackId   String
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+  body      String   @db.Text
+  timestamp Int?     // Optional timestamp in seconds for track comments
+  likes     Int      @default(0)
+  createdAt DateTime @default(now())
+  likedBy   TrackCommentLike[]
+  
+  @@index([trackId, createdAt])
+  @@index([authorId])
+}
+
+model TrackCommentLike {
+  id        String   @id @default(cuid())
+  comment   TrackComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  commentId String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  
+  @@unique([commentId, userId], name: "commentId_userId")
+  @@index([commentId])
+}
+
+model Playlist {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @db.Text
+  image       String?
+  isPublic    Boolean  @default(true)
+  
+  owner       User     @relation(fields: [ownerId], references: [id])
+  ownerId     String
+  tracks      PlaylistTrack[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([ownerId])
+  @@index([isPublic])
+}
+
+model PlaylistTrack {
+  id          String   @id @default(cuid())
+  playlist    Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  playlistId  String
+  track       Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  trackId     String
+  position    Int      // Track order in playlist
+  
+  createdAt   DateTime @default(now())
+  
+  @@unique([playlistId, trackId])
+  @@index([playlistId])
+}
+
+model Follow {
+  id        String   @id @default(cuid())
+  follower  User     @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  followerId String
+  following User     @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+  followingId String
+  createdAt DateTime @default(now())
+  
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Repost {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  track     Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  trackId   String
+  createdAt DateTime @default(now())
+  
+  @@unique([userId, trackId])
+  @@index([userId])
+  @@index([trackId])
+}
+
+model ListeningHistory {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  track     Track?   @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  trackId   String?
+  // SoundCloud track data (stored as JSON for tracks not in database)
+  soundcloudTrackId String?
+  soundcloudTitle   String?
+  soundcloudArtist  String?
+  soundcloudArtworkUrl String?
+  soundcloudAudioUrl   String?
+  soundcloudSourceUrl  String?
+  soundcloudDuration   Int?     // Duration in seconds
+  playedAt  DateTime @default(now())
+  
+  @@unique([userId, trackId], name: "userId_trackId")
+  @@unique([userId, soundcloudTrackId], name: "userId_soundcloudTrackId")
+  @@index([userId, playedAt])
+  @@index([trackId])
+  @@index([soundcloudTrackId])
+}
+
+model PendingRegistration {
+  id          String   @id @default(cuid())
+  discordId   String
+  email       String
+  name        String
+  avatarUrl   String?
+  bannerUrl   String?
+  password    String
+  inviteCode  String
+  flagReason  String
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([status])
+  @@index([discordId])
+}
+

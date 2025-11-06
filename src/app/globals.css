@@ -1,0 +1,229 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Advanced animations */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes reverse-spin {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes float-up {
+  0% { 
+    transform: translateY(0px) scale(0);
+    opacity: 0;
+  }
+  50% { 
+    transform: translateY(-10px) scale(1);
+    opacity: 1;
+  }
+  100% { 
+    transform: translateY(-20px) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes slide-down {
+  0% {
+    transform: translate(-50%, -100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
+.animate-reverse-spin {
+  animation: reverse-spin 2s linear infinite;
+}
+
+.animate-float-up {
+  animation: float-up 1.5s ease-out infinite;
+}
+
+/* Cross-browser compatibility fixes */
+.text-transparent {
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Fallback for browsers that don't support background-clip: text */
+@supports not (background-clip: text) {
+  .text-transparent {
+    color: #8b5cf6 !important;
+    -webkit-text-fill-color: initial;
+    -webkit-background-clip: initial;
+    background-clip: initial;
+  }
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html, body {
+  @apply bg-black text-white;
+}
+
+a { @apply text-brand-400 hover:text-brand-300; }
+
+.card {
+  @apply bg-neutral-900/70 border border-neutral-800 rounded-lg shadow;
+}
+
+/* Depth and elevation utilities */
+.depth-card {
+  @apply bg-neutral-800/60 backdrop-blur-sm rounded-xl border border-neutral-700/60;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 2px 4px -1px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 8px 16px -4px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+}
+
+.depth-card:hover {
+  box-shadow: 
+    0 8px 12px -2px rgba(0, 0, 0, 0.4),
+    0 4px 8px -2px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 12px 24px -6px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(124, 58, 237, 0.1);
+  transform: translateY(-2px);
+  border-color: rgba(124, 58, 237, 0.4);
+}
+
+.depth-section {
+  @apply bg-neutral-800/50 backdrop-blur-sm rounded-xl border border-neutral-700/60;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 2px 4px -1px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 8px 16px -4px rgba(0, 0, 0, 0.4);
+}
+
+.depth-sidebar {
+  @apply bg-neutral-800/60 backdrop-blur-sm rounded-xl border border-neutral-700/60;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 2px 4px -1px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+    0 8px 16px -4px rgba(0, 0, 0, 0.4);
+}
+
+.btn {
+  @apply inline-flex items-center gap-2 rounded-md bg-brand-700 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-60;
+}
+
+/* Smaller slider thumb for timeline */
+.slider-thumb-small::-webkit-slider-thumb {
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #7c3aed;
+  cursor: pointer;
+  border: 1px solid rgba(124, 58, 237, 0.5);
+  box-shadow: 0 0 4px rgba(124, 58, 237, 0.6);
+  transition: all 0.2s ease;
+}
+
+.slider-thumb-small::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 8px rgba(124, 58, 237, 0.8);
+}
+
+.slider-thumb-small::-webkit-slider-thumb:active {
+  transform: scale(1.4);
+  box-shadow: 0 0 12px rgba(124, 58, 237, 1);
+}
+
+.slider-thumb-small::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #7c3aed;
+  cursor: pointer;
+  border: 1px solid rgba(124, 58, 237, 0.5);
+  box-shadow: 0 0 4px rgba(124, 58, 237, 0.6);
+  transition: all 0.2s ease;
+}
+
+.slider-thumb-small::-moz-range-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 8px rgba(124, 58, 237, 0.8);
+}
+
+.slider-thumb-small::-moz-range-thumb:active {
+  transform: scale(1.4);
+  box-shadow: 0 0 12px rgba(124, 58, 237, 1);
+}
+
+/* Mini player button animations */
+.mini-player-btn {
+  transition: all 0.2s ease;
+}
+
+.mini-player-btn:hover {
+  transform: scale(1.15);
+}
+
+.mini-player-btn:active {
+  transform: scale(0.95);
+}
+
+.mini-player-btn-icon {
+  transition: transform 0.2s ease;
+}
+
+.mini-player-btn:hover .mini-player-btn-icon {
+  transform: scale(1.1);
+}
+
+/* Play/Pause button special animation */
+.mini-player-play-btn {
+  transition: all 0.2s ease;
+}
+
+.mini-player-play-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.8) !important;
+}
+
+.mini-player-play-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 0 6px rgba(124, 58, 237, 0.6) !important;
+}
+
