@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const COBALT_API_URL = process.env.NEXT_PUBLIC_COBALT_API_URL || process.env.COBALT_API_URL || 'https://cobalt.tools'
+const COBALT_API_URL = process.env.NEXT_PUBLIC_COBALT_API_URL || process.env.COBALT_API_URL || 'https://remibolt.vercel.app'
 
 interface CobaltRequest {
   url: string
