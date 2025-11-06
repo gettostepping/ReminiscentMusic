@@ -49,8 +49,8 @@ export async function processSoundCloudUrl(soundcloudUrl: string): Promise<Cobal
   try {
     console.log('🎵 Processing SoundCloud URL:', soundcloudUrl)
     
-    // Cobalt.tools API endpoint - uses /api/json endpoint
-    const response = await axios.post(`${COBALT_API_URL}/api/json`, {
+    // Cobalt.tools API endpoint - uses root path /
+    const response = await axios.post(`${COBALT_API_URL}/`, {
       url: soundcloudUrl,
       audioFormat: 'best',
       downloadMode: 'audio',
