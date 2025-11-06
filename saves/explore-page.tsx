@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -12,7 +12,7 @@ import { getTrackArtwork } from '@/lib/images'
 import DownloadingPopup from '@/components/DownloadingPopup'
 import Link from 'next/link'
 
-function ExploreContent() {
+export default function ExplorePage() {
   const { data: session, status } = useSession()
   const searchParams = useSearchParams()
   const { tracks, playTrack, currentTrack, isPlaying, imageErrors, handleImageError } = useAudioPlayer()
@@ -296,22 +296,6 @@ function ExploreContent() {
         )}
       </div>
     </main>
-  )
-}
-
-export default function ExplorePage() {
-  return (
-    <Suspense fallback={
-      <main className="min-h-screen bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900">
-        <div className="max-w-7xl mx-auto px-6 py-8 pb-32">
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-400"></div>
-          </div>
-        </div>
-      </main>
-    }>
-      <ExploreContent />
-    </Suspense>
   )
 }
 
