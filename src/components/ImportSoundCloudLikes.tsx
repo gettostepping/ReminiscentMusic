@@ -262,44 +262,48 @@ export default function ImportSoundCloudLikes({ isOpen, onClose, onImportComplet
                 <span className="font-semibold">Import Complete!</span>
               </div>
 
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-neutral-400">Total found:</span>
-                  <span className="text-white font-semibold">{importProgress.total}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-neutral-400">Imported:</span>
-                  <span className="text-green-500 font-semibold">{importProgress.imported}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-neutral-400">Skipped (already liked):</span>
-                  <span className="text-neutral-500 font-semibold">{importProgress.skipped}</span>
-                </div>
-                {importProgress.failed > 0 && (
-                  <div className="flex justify-between">
-                    <span className="text-neutral-400">Failed to process:</span>
-                    <span className="text-red-500 font-semibold">{importProgress.failed}</span>
-                  </div>
-                )}
-                {importProgress.message && (
-                  <div className="mt-2 p-2 bg-blue-500/20 border border-blue-500/50 rounded text-xs text-blue-400">
-                    ℹ️ {importProgress.message}
-                  </div>
-                )}
-              </div>
-
-              {importProgress.errors.length > 0 && (
-                <div className="mt-4 p-3 bg-neutral-800/50 rounded-lg">
-                  <p className="text-xs text-neutral-400 mb-2">Some tracks could not be imported:</p>
-                  <ul className="text-xs text-red-400 space-y-1">
-                    {importProgress.errors.slice(0, 5).map((error, i) => (
-                      <li key={i}>• {error}</li>
-                    ))}
-                    {importProgress.errors.length > 5 && (
-                      <li className="text-neutral-500">...and {importProgress.errors.length - 5} more</li>
+              {importProgress && (
+                <>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-neutral-400">Total found:</span>
+                      <span className="text-white font-semibold">{importProgress.total}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-neutral-400">Imported:</span>
+                      <span className="text-green-500 font-semibold">{importProgress.imported}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-neutral-400">Skipped (already liked):</span>
+                      <span className="text-neutral-500 font-semibold">{importProgress.skipped}</span>
+                    </div>
+                    {importProgress.failed > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-neutral-400">Failed to process:</span>
+                        <span className="text-red-500 font-semibold">{importProgress.failed}</span>
+                      </div>
                     )}
-                  </ul>
-                </div>
+                    {importProgress.message && (
+                      <div className="mt-2 p-2 bg-blue-500/20 border border-blue-500/50 rounded text-xs text-blue-400">
+                        ℹ️ {importProgress.message}
+                      </div>
+                    )}
+                  </div>
+
+                  {importProgress.errors.length > 0 && (
+                    <div className="mt-4 p-3 bg-neutral-800/50 rounded-lg">
+                      <p className="text-xs text-neutral-400 mb-2">Some tracks could not be imported:</p>
+                      <ul className="text-xs text-red-400 space-y-1">
+                        {importProgress.errors.slice(0, 5).map((error, i) => (
+                          <li key={i}>• {error}</li>
+                        ))}
+                        {importProgress.errors.length > 5 && (
+                          <li className="text-neutral-500">...and {importProgress.errors.length - 5} more</li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                </>
               )}
             </div>
 

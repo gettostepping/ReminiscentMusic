@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const COBALT_API_URL = process.env.NEXT_PUBLIC_COBALT_API_URL || process.env.COBALT_API_URL || 'https://cobalt.tools'
+const COBALT_API_URL = process.env.NEXT_PUBLIC_COBALT_API_URL || process.env.COBALT_API_URL || 'http://localhost:9000'
 
 interface CobaltRequest {
   url: string
@@ -49,8 +49,7 @@ export async function processSoundCloudUrl(soundcloudUrl: string): Promise<Cobal
   try {
     console.log('🎵 Processing SoundCloud URL:', soundcloudUrl)
     
-    // Cobalt.tools API endpoint - uses /api/json endpoint
-    const response = await axios.post(`${COBALT_API_URL}/api/json`, {
+    const response = await axios.post(`${COBALT_API_URL}/`, {
       url: soundcloudUrl,
       audioFormat: 'best',
       downloadMode: 'audio',
