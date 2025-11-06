@@ -1,8 +1,8 @@
 "use client"
 import { useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSoundcloud, faDownload } from '@fortawesome/free-brands-svg-icons'
-import { faXmark, faSpinner, faCheckCircle } from '@fortawesome/free-solid-svg-icons'
+import { faSoundcloud } from '@fortawesome/free-brands-svg-icons'
+import { faXmark, faSpinner, faCheckCircle, faDownload } from '@fortawesome/free-solid-svg-icons'
 import { useToast } from '@/hooks/useToast'
 
 interface ImportSoundCloudLikesProps {

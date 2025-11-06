@@ -76,6 +76,7 @@ export async function GET(req: NextRequest) {
           soundcloudId: like.soundcloudTrackId,
           likeCount: 0,
           commentCount: 0,
+          repostCount: 0, // SoundCloud tracks don't have reposts
           playCount: 0,
           likedAt: like.createdAt
         }
@@ -107,7 +108,10 @@ export async function GET(req: NextRequest) {
           if (counts) {
             like.likeCount = counts.likes
             like.commentCount = counts.comments
-            like.repostCount = counts.reposts
+            // Only set repostCount for regular tracks (not SoundCloud tracks)
+            if (!like.isSoundCloud) {
+              like.repostCount = counts.reposts
+            }
           }
         }
       })
